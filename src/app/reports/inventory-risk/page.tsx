@@ -1,5 +1,6 @@
 import { query } from '@/lib/db';
 import Link from 'next/link';
+import CategoryFilter from './CategoryFilter';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +28,10 @@ export default async function InventoryRiskPage(props: {
     const searchParams = await props.searchParams;
     const categoryFilter = searchParams.category || '';
 
-    // Obtener categorías para el filtro
     const categories = await query<Category>(
-        `SELECT category_id, name FROM categories ORDER BY name`
+        `SELECT category_id, name FROM vw_categories ORDER BY name`
     );
 
-    // Query con filtro opcional de categoría
     const inventoryData = await query<InventoryRisk>(
         categoryFilter
             ? `SELECT * FROM vw_inventory_risk WHERE categoria = $1 ORDER BY stock_actual::DECIMAL / NULLIF(stock_minimo, 1) ASC`
@@ -40,7 +39,6 @@ export default async function InventoryRiskPage(props: {
         categoryFilter ? [categoryFilter] : []
     );
 
-    // KPIs
     const criticalCount = inventoryData.filter(
         (p) => p.nivel_alerta.includes('CRÍTICO')
     ).length;
@@ -50,7 +48,6 @@ export default async function InventoryRiskPage(props: {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center gap-4">
@@ -63,7 +60,7 @@ export default async function InventoryRiskPage(props: {
                         <div className="h-8 w-px bg-gray-300" />
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">
-                                ⚠️ Inventario en Riesgo
+                                Inventario en Riesgo
                             </h1>
                             <p className="text-sm text-gray-500 mt-1">
                                 Productos con stock bajo que requieren atención
@@ -74,11 +71,10 @@ export default async function InventoryRiskPage(props: {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div className="bg-white rounded-lg shadow-sm border p-6">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">🚨</span>
+                            <span className="text-3xl"></span>
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">Nivel Crítico</p>
                                 <p className="text-3xl font-bold text-red-600">
@@ -89,7 +85,7 @@ export default async function InventoryRiskPage(props: {
                     </div>
                     <div className="bg-white rounded-lg shadow-sm border p-6">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">⚠️</span>
+                            <span className="text-3xl"></span>
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">Riesgo Alto</p>
                                 <p className="text-3xl font-bold text-orange-600">
@@ -100,7 +96,7 @@ export default async function InventoryRiskPage(props: {
                     </div>
                     <div className="bg-white rounded-lg shadow-sm border p-6">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl">📦</span>
+                            <span className="text-3xl"></span>
                             <div>
                                 <p className="text-sm text-gray-500 mb-1">Total en Riesgo</p>
                                 <p className="text-3xl font-bold text-gray-900">
@@ -111,37 +107,8 @@ export default async function InventoryRiskPage(props: {
                     </div>
                 </div>
 
-                {/* Filtro por Categoría */}
-                <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-                    <h2 className="text-lg font-semibold mb-4">Filtrar por Categoría</h2>
-                    <div className="flex gap-2 flex-wrap">
-                        <Link
-                            href="/reports/inventory-risk"
-                            className={`px-4 py-2 rounded-md font-medium transition-colors ${!categoryFilter
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                }`}
-                        >
-                            Todas
-                        </Link>
-                        {categories.map((cat) => (
-                            <Link
-                                key={cat.category_id}
-                                href={`/reports/inventory-risk?category=${encodeURIComponent(
-                                    cat.name
-                                )}`}
-                                className={`px-4 py-2 rounded-md font-medium transition-colors ${categoryFilter === cat.name
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
-                            >
-                                {cat.name}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+                <CategoryFilter categories={categories} currentCategory={categoryFilter} />
 
-                {/* Tabla */}
                 <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                     <div className="px-6 py-4 border-b">
                         <h2 className="text-lg font-semibold">

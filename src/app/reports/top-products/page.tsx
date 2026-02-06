@@ -1,5 +1,6 @@
 import { query } from '@/lib/db';
 import Link from 'next/link';
+import LimitSelector from './LimitSelector';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,6 @@ export default async function TopProductsPage(props: {
     const limit = parseInt(searchParams.limit || '10');
     const offset = (page - 1) * limit;
 
-    // Query con búsqueda y paginación
     const productsData = await query<TopProduct>(
         `SELECT 
       product_id,
@@ -46,7 +46,6 @@ export default async function TopProductsPage(props: {
         [`%${search}%`, limit, offset]
     );
 
-    // Total de productos (para paginación)
     const totalCount = await query<{ count: number }>(
         `SELECT COUNT(*) as count 
      FROM vw_top_products_ranked 
@@ -56,12 +55,10 @@ export default async function TopProductsPage(props: {
 
     const totalPages = Math.ceil((totalCount[0]?.count || 0) / limit);
 
-    // Top 3 KPIs
     const top3 = productsData.slice(0, 3);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center gap-4">
@@ -74,7 +71,7 @@ export default async function TopProductsPage(props: {
                         <div className="h-8 w-px bg-gray-300" />
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">
-                                🏆 Top Productos
+                                Top Productos
                             </h1>
                             <p className="text-sm text-gray-500 mt-1">
                                 Ranking de productos más vendidos por revenue
@@ -116,7 +113,6 @@ export default async function TopProductsPage(props: {
                     ))}
                 </div>
 
-                {/* Búsqueda */}
                 <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
                     <h2 className="text-lg font-semibold mb-4">Buscar Producto</h2>
                     <form className="flex gap-4">
@@ -144,28 +140,12 @@ export default async function TopProductsPage(props: {
                     </form>
                 </div>
 
-                {/* Tabla */}
                 <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                     <div className="px-6 py-4 border-b flex items-center justify-between">
                         <h2 className="text-lg font-semibold">
                             Productos ({totalCount[0]?.count || 0} total)
                         </h2>
-                        <div className="flex gap-2 items-center text-sm text-gray-600">
-                            <span>Mostrar:</span>
-                            <select
-                                name="limit"
-                                defaultValue={limit}
-                                onChange={(e) => {
-                                    const newLimit = e.target.value;
-                                    window.location.href = `/reports/top-products?search=${search}&limit=${newLimit}&page=1`;
-                                }}
-                                className="border border-gray-300 rounded px-2 py-1"
-                            >
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                            </select>
-                        </div>
+                        <LimitSelector currentLimit={limit} search={search} />
                     </div>
 
                     <div className="overflow-x-auto">
@@ -224,14 +204,15 @@ export default async function TopProductsPage(props: {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                             <span
-                                                className={`px-3 py-1 rounded-full text-xs font-medium ${product.clasificacion === 'Estrella'
+                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                    product.clasificacion === 'Estrella'
                                                         ? 'bg-yellow-100 text-yellow-800'
                                                         : product.clasificacion === 'Popular'
                                                             ? 'bg-green-100 text-green-800'
                                                             : product.clasificacion === 'Regular'
                                                                 ? 'bg-blue-100 text-blue-800'
                                                                 : 'bg-gray-100 text-gray-800'
-                                                    }`}
+                                                }`}
                                             >
                                                 {product.clasificacion}
                                             </span>
@@ -242,32 +223,36 @@ export default async function TopProductsPage(props: {
                         </table>
                     </div>
 
-                    {/* Paginación */}
                     <div className="px-6 py-4 border-t bg-gray-50 flex items-center justify-between">
                         <div className="text-sm text-gray-600">
                             Página {page} de {totalPages}
                         </div>
                         <div className="flex gap-2">
-                            <Link
-                                href={`/reports/top-products?search=${search}&limit=${limit}&page=${page - 1
-                                    }`}
-                                className={`px-4 py-2 rounded-md font-medium ${page <= 1
-                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                    }`}
-                            >
-                                Anterior
-                            </Link>
-                            <Link
-                                href={`/reports/top-products?search=${search}&limit=${limit}&page=${page + 1
-                                    }`}
-                                className={`px-4 py-2 rounded-md font-medium ${page >= totalPages
-                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                    }`}
-                            >
-                                Siguiente
-                            </Link>
+                            {page > 1 ? (
+                                <Link
+                                    href={`/reports/top-products?search=${search}&limit=${limit}&page=${page - 1}`}
+                                    className="px-4 py-2 rounded-md font-medium bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                                >
+                                    Anterior
+                                </Link>
+                            ) : (
+                                <span className="px-4 py-2 rounded-md font-medium bg-gray-200 text-gray-400 cursor-not-allowed">
+                                    Anterior
+                                </span>
+                            )}
+                            
+                            {page < totalPages ? (
+                                <Link
+                                    href={`/reports/top-products?search=${search}&limit=${limit}&page=${page + 1}`}
+                                    className="px-4 py-2 rounded-md font-medium bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                                >
+                                    Siguiente
+                                </Link>
+                            ) : (
+                                <span className="px-4 py-2 rounded-md font-medium bg-gray-200 text-gray-400 cursor-not-allowed">
+                                    Siguiente
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

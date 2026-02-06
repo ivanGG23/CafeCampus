@@ -35,3 +35,4 @@ GRANT SELECT ON vw_top_products_ranked TO app_user;
 GRANT SELECT ON vw_inventory_risk TO app_user;
 GRANT SELECT ON vw_customer_value TO app_user;
 GRANT SELECT ON vw_payment_mix TO app_user;
+GRANT SELECT ON vw_categories TO app_user;

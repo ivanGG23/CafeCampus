@@ -17,13 +17,11 @@ export default async function SalesDailyPage(props: {
 }) {
     const searchParams = await props.searchParams;
 
-    // Filtros con valores por defecto (últimos 30 días)
     const dateFrom = searchParams.date_from ||
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     const dateTo = searchParams.date_to ||
         new Date().toISOString().split('T')[0];
 
-    // Query a la VIEW con filtros
     const salesData = await query<SalesDaily>(
         `SELECT 
       fecha::text,
@@ -38,14 +36,12 @@ export default async function SalesDailyPage(props: {
         [dateFrom, dateTo]
     );
 
-    // KPIs calculados
     const totalVentas = salesData.reduce((sum, row) => sum + Number(row.total_ventas), 0);
     const totalTickets = salesData.reduce((sum, row) => sum + Number(row.tickets), 0);
     const promedioGeneral = totalTickets > 0 ? totalVentas / totalTickets : 0;
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="bg-white shadow-sm border-b">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
@@ -59,7 +55,7 @@ export default async function SalesDailyPage(props: {
                             <div className="h-8 w-px bg-gray-300" />
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-900">
-                                    📊 Ventas Diarias
+                                    Ventas Diarias
                                 </h1>
                                 <p className="text-sm text-gray-500 mt-1">
                                     Análisis de ventas por día con métricas clave
@@ -71,7 +67,6 @@ export default async function SalesDailyPage(props: {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Filtros */}
                 <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
                     <h2 className="text-lg font-semibold mb-4">Filtros de Fecha</h2>
                     <form className="flex gap-4 items-end">
@@ -106,7 +101,6 @@ export default async function SalesDailyPage(props: {
                     </form>
                 </div>
 
-                {/* KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div className="bg-white rounded-lg shadow-sm border p-6">
                         <p className="text-sm text-gray-500 mb-1">Total Ventas</p>
@@ -128,7 +122,6 @@ export default async function SalesDailyPage(props: {
                     </div>
                 </div>
 
-                {/* Tabla de Datos */}
                 <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                     <div className="px-6 py-4 border-b">
                         <h2 className="text-lg font-semibold">

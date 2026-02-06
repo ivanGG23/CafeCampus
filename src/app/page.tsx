@@ -7,7 +7,7 @@ export default function Home() {
       title: 'Ventas Diarias',
       description: 'Análisis de ventas por día con métricas clave',
       href: '/reports/sales-daily',
-      icon: '📊',
+      icon: '',
       color: 'bg-blue-500'
     },
     {
@@ -15,7 +15,7 @@ export default function Home() {
       title: 'Top Productos',
       description: 'Ranking de productos más vendidos por revenue',
       href: '/reports/top-products',
-      icon: '🏆',
+      icon: '',
       color: 'bg-green-500'
     },
     {
@@ -23,7 +23,7 @@ export default function Home() {
       title: 'Inventario en Riesgo',
       description: 'Productos con stock bajo que requieren atención',
       href: '/reports/inventory-risk',
-      icon: '⚠️',
+      icon: '',
       color: 'bg-yellow-500'
     },
     {
@@ -31,7 +31,7 @@ export default function Home() {
       title: 'Valor de Clientes',
       description: 'Segmentación y análisis de clientes por valor',
       href: '/reports/customer-value',
-      icon: '👥',
+      icon: '',
       color: 'bg-purple-500'
     },
     {
@@ -39,18 +39,17 @@ export default function Home() {
       title: 'Mix de Pagos',
       description: 'Distribución de métodos de pago y tendencias',
       href: '/reports/payment-mix',
-      icon: '💳',
+      icon: '',
       color: 'bg-pink-500'
     }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">☕</span>
+            <span className="text-4xl"></span>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
                 Café Campus
@@ -63,9 +62,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Welcome Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-semibold text-gray-900 mb-3">
             Bienvenido al Sistema de Reportes
@@ -77,7 +74,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Reports Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reports.map((report) => (
             <Link
@@ -85,10 +81,8 @@ export default function Home() {
               href={report.href}
               className="group block bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 overflow-hidden"
             >
-              {/* Color Bar */}
               <div className={`h-2 ${report.color}`} />
               
-              {/* Card Content */}
               <div className="p-6">
                 <div className="flex items-start gap-4">
                   <div className="text-4xl group-hover:scale-110 transition-transform">
@@ -104,7 +98,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Arrow Icon */}
                 <div className="mt-4 flex items-center text-sm font-medium text-blue-600 group-hover:translate-x-1 transition-transform">
                   Ver reporte
                   <svg
@@ -126,44 +119,9 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Stats Section */}
-        <div className="mt-12 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            📈 Características del Sistema
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">🔒</div>
-              <div>
-                <p className="font-medium text-gray-900">Seguridad</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Usuario app con permisos SELECT solo en VIEWS
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">⚡</div>
-              <div>
-                <p className="font-medium text-gray-900">Performance</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Índices optimizados en PostgreSQL
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">🐳</div>
-              <div>
-                <p className="font-medium text-gray-900">Docker</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Despliegue completo con docker compose
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </main>
 
-      {/* Footer */}
       <footer className="mt-12 pb-8 text-center text-sm text-gray-500">
         <p>Café Campus - Sistema de Reportes © 2026</p>
       </footer>

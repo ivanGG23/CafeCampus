@@ -148,3 +148,14 @@ FROM payments p
 GROUP BY p.method
 HAVING COUNT(p.payment_id) > 0
 ORDER BY monto_total DESC;
+
+-- ============================================
+
+CREATE OR REPLACE VIEW vw_categories AS
+SELECT 
+    category_id,
+    name,
+    description
+FROM categories
+WHERE TRUE
+ORDER BY name;
