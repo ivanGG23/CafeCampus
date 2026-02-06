@@ -6,14 +6,12 @@ Dashboard de analítica para cafetería del campus desarrollado con Next.js (Typ
 
 - [Características](#características)
 - [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Arquitectura del Proyecto](#arquitectura-del-proyecto)
+- [Estructura del Proyecto](#estructura-del-proyecto)
 - [Requisitos Previos](#requisitos-previos)
 - [Instalación y Ejecución](#instalación-y-ejecución)
-- [Modelo de Datos](#modelo-de-datos)
 - [VIEWS Implementadas](#views-implementadas)
 - [Seguridad](#seguridad)
 - [Índices y Performance](#índices-y-performance)
-- [Estructura del Proyecto](#estructura-del-proyecto)
 
 ---
 
@@ -50,30 +48,41 @@ Dashboard de analítica para cafetería del campus desarrollado con Next.js (Typ
 
 ---
 
-## Arquitectura del Proyecto
+## Estructura del Proyecto
 ```
 cafecampus/
-├── db/                          # Scripts SQL
-│   ├── schema.sql              # Creación de tablas
-│   ├── seed.sql                # Datos de prueba
-│   ├── reports_vw.sql          # 5 VIEWS de reportes
-│   ├── indexes.sql             # Índices optimizados
+├── db/
+│   ├── schema.sql              # 7 tablas con FK
+│   ├── seed.sql                # Datos de prueba (50+ órdenes)
+│   ├── reports_vw.sql          # 5 VIEWS con comentarios
+│   ├── indexes.sql             # 6 índices
 │   ├── roles.sql               # Usuario app_user
-│   └── migrate.sql             # Script maestro
+│   └── migrate.sql             # Ejecuta todo en orden
 ├── src/
 │   ├── app/
+│   │   ├── layout.tsx
 │   │   ├── page.tsx            # Dashboard principal
-│   │   └── reports/            # Páginas de reportes
-│   │       ├── sales-daily/
-│   │       ├── top-products/
-│   │       ├── inventory-risk/
-│   │       ├── customer-value/
-│   │       └── payment-mix/
+│   │   └── reports/
+│   │       ├── sales-daily/page.tsx
+│   │       ├── top-products/page.tsx
+│   │       ├── inventory-risk/page.tsx
+│   │       ├── customer-value/page.tsx
+│   │       └── payment-mix/page.tsx
 │   └── lib/
-│       └── db.ts               # Conexión PostgreSQL
-├── docker-compose.yml          # Orquestación de servicios
-├── Dockerfile                  # Imagen de Next.js
-└── README.md
+│       └── db.ts               # Pool de conexiones PostgreSQL
+├── public/
+├── .dockerignore
+├── .env.local
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── next.config.js
+├── package.json
+├── package-lock.json
+├── postcss.config.mjs
+├── README.md
+├── tailwind.config.ts
+└── tsconfig.json
 ```
 
 ---
@@ -267,6 +276,7 @@ GRANT SELECT ON vw_top_products_ranked TO app_user;
 GRANT SELECT ON vw_inventory_risk TO app_user;
 GRANT SELECT ON vw_customer_value TO app_user;
 GRANT SELECT ON vw_payment_mix TO app_user;
+GRANT SELECT ON vw_categories  TO app_user;
 
 -- Revocar acceso a tablas base
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM app_user;
@@ -377,43 +387,6 @@ El índice `idx_products_category_active` optimiza las búsquedas por categoría
 
 ---
 
-## Estructura del Proyecto
-```
-cafecampus/
-├── db/
-│   ├── schema.sql              # 7 tablas con FK
-│   ├── seed.sql                # Datos de prueba (50+ órdenes)
-│   ├── reports_vw.sql          # 5 VIEWS con comentarios
-│   ├── indexes.sql             # 6 índices
-│   ├── roles.sql               # Usuario app_user
-│   └── migrate.sql             # Ejecuta todo en orden
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx            # Dashboard principal
-│   │   └── reports/
-│   │       ├── sales-daily/page.tsx
-│   │       ├── top-products/page.tsx
-│   │       ├── inventory-risk/page.tsx
-│   │       ├── customer-value/page.tsx
-│   │       └── payment-mix/page.tsx
-│   └── lib/
-│       └── db.ts               # Pool de conexiones PostgreSQL
-├── public/
-├── .dockerignore
-├── .env.local
-├── .gitignore
-├── docker-compose.yml
-├── Dockerfile
-├── next.config.js
-├── package.json
-├── package-lock.json
-├── postcss.config.mjs
-├── README.md
-├── tailwind.config.ts
-└── tsconfig.json
-```
-
 ---
 
 ## Variables de Entorno
@@ -470,13 +443,13 @@ docker compose ps
 
 El proyecto incluye datos suficientes para demostrar todas las funcionalidades:
 
-- **10 categorías** de productos
-- **10 proveedores**
-- **10 productos** (5 con stock bajo)
-- **10 clientes** con diferentes segmentos
-- **10 órdenes** distribuidas en los últimos 30 días
-- **10 items** de órdenes
-- **10 pagos** con 3 métodos diferentes
+- **5 categorías** de productos
+- **3 proveedores**
+- **21 productos** (5 con stock bajo)
+- **15 clientes** con diferentes segmentos
+- **67 órdenes** distribuidas en los últimos 30 días
+- **80 items** de órdenes
+- **64 pagos** con 3 métodos diferentes
 
 ---
 
@@ -529,12 +502,8 @@ El proyecto incluye datos suficientes para demostrar todas las funcionalidades:
 
 ##  Autor
 
-**[Tu Nombre]**  
+**IVAN**  
 Materia: AWOS y BDA 5°A  
 Fecha: Febrero 2026
 
 ---
-
-## Licencia
-
-Este proyecto es parte de una evaluación académica.

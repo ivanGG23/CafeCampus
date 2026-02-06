@@ -18,7 +18,7 @@ CREATE TABLE suppliers (
     name VARCHAR(200) NOT NULL,
     contact VARCHAR(150),
     email VARCHAR(150),
-    phone VARCHAR(20),
+    phone VARCHAR(50),
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
