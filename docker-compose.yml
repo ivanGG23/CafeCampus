@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: cafecampus_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_admin_2024
+      POSTGRES_DB: CafeCampus
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - ./db/reports_vw.sql:/docker-entrypoint-initdb.d/03-reports_vw.sql
+      - ./db/indexes.sql:/docker-entrypoint-initdb.d/04-indexes.sql
+      - ./db/roles.sql:/docker-entrypoint-initdb.d/05-roles.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d CafeCampus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cafecampus_network
+
+  # ============================================
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cafecampus_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://app_user:app_secure_pass_2024@db:5432/CafeCampus
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - cafecampus_network
+
+# ============================================
+
+volumes:
+  postgres_data:
+    driver: local
+
+# ============================================
+
+networks:
+  cafecampus_network:
+    driver: bridge
