@@ -1,6 +1,5 @@
 import { Pool, QueryResultRow } from 'pg';
 
-// Singleton pattern para la conexión
 let pool: Pool | null = null;
 
 export function getPool(): Pool {
