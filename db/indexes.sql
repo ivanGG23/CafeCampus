@@ -18,7 +18,6 @@ ON orders(customer_id, status, created_at);
 
 -- ============================================
 
--- Mejora: Agregaciones por producto
 CREATE INDEX idx_order_items_product 
 ON order_items(product_id, qty, unit_price);
 

@@ -223,3 +223,44 @@ INSERT INTO order_items (order_id, product_id, qty, unit_price) VALUES
 (66, 7, 1, 45.00),
 (67, 1, 4, 25.00),
 (67, 11, 3, 22.00);
+/*
+INSERT INTO payments (order_id, method, paid_amount, created_at)
+SELECT 
+    o.order_id,
+    CASE 
+        WHEN o.order_id % 3 = 0 THEN 'efectivo'
+        WHEN o.order_id % 3 = 1 THEN 'tarjeta'
+        ELSE 'transferencia'
+    END as method,
+    (SELECT SUM(qty * unit_price) FROM order_items WHERE order_id = o.order_id) as paid_amount,
+    o.created_at + INTERVAL '2 minutes'
+FROM orders o
+WHERE o.status = 'completed';
+
+SELECT 'Categories' as tabla, COUNT(*) as registros FROM categories
+UNION ALL
+SELECT 'Suppliers', COUNT(*) FROM suppliers
+UNION ALL
+SELECT 'Products', COUNT(*) FROM products
+UNION ALL
+SELECT 'Customers', COUNT(*) FROM customers
+UNION ALL
+SELECT 'Orders', COUNT(*) FROM orders
+UNION ALL
+SELECT 'Order Items', COUNT(*) FROM order_items
+UNION ALL
+SELECT 'Payments', COUNT(*) FROM payments;
+
+SELECT 
+    name as producto,
+    stock,
+    min_stock,
+    CASE 
+        WHEN stock < min_stock THEN 'EN RIESGO'
+        ELSE 'Stock OK'
+    END as estado
+FROM products
+WHERE stock < min_stock
+ORDER BY stock ASC;
+
+*/

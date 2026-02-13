@@ -4,94 +4,14 @@ Dashboard de analítica para cafetería del campus desarrollado con Next.js (Typ
 
 ## Tabla de Contenidos
 
+- [Instalación y Ejecución](#instalación-y-ejecución)
 - [Características](#características)
 - [Tecnologías Utilizadas](#tecnologías-utilizadas)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Requisitos Previos](#requisitos-previos)
-- [Instalación y Ejecución](#instalación-y-ejecución)
 - [VIEWS Implementadas](#views-implementadas)
 - [Seguridad](#seguridad)
 - [Índices y Performance](#índices-y-performance)
-
----
-
-## Características
-
-### Reportes Implementados
-
-1. **Ventas Diarias** - Análisis de ventas por día con filtros de fecha
-2. **Top Productos** - Ranking de productos con búsqueda y paginación
-3. **Inventario en Riesgo** - Productos con stock bajo filtrados por categoría
-4. **Valor de Clientes** - Segmentación de clientes con paginación
-5. **Mix de Pagos** - Distribución de métodos de pago
-
-### Funcionalidades Técnicas
-
-- Filtros por fecha (Ventas Diarias)
-- Búsqueda por nombre (Top Productos)
-- Filtros por categoría con whitelist (Inventario en Riesgo)
-- Paginación server-side con validación (Top Productos, Valor de Clientes)
-- KPIs destacados en cada reporte
-- Seguridad: Usuario `app_user` con SELECT solo sobre VIEWS
-- Índices optimizados en PostgreSQL
-- Despliegue completo con Docker Compose
-
----
-
-## Tecnologías Utilizadas
-
-- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS
-- **Backend**: Next.js Server Components, Node.js
-- **Base de Datos**: PostgreSQL 16
-- **Containerización**: Docker, Docker Compose
-- **Librerías**: pg (PostgreSQL client), Zod (validación)
-
----
-
-## Estructura del Proyecto
-```
-cafecampus/
-├── db/
-│   ├── schema.sql              # 7 tablas con FK
-│   ├── seed.sql                # Datos de prueba (50+ órdenes)
-│   ├── reports_vw.sql          # 5 VIEWS con comentarios
-│   ├── indexes.sql             # 6 índices
-│   ├── roles.sql               # Usuario app_user
-│   └── migrate.sql             # Ejecuta todo en orden
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx            # Dashboard principal
-│   │   └── reports/
-│   │       ├── sales-daily/page.tsx
-│   │       ├── top-products/page.tsx
-│   │       ├── inventory-risk/page.tsx
-│   │       ├── customer-value/page.tsx
-│   │       └── payment-mix/page.tsx
-│   └── lib/
-│       └── db.ts               # Pool de conexiones PostgreSQL
-├── public/
-├── .dockerignore
-├── .env.local
-├── .gitignore
-├── docker-compose.yml
-├── Dockerfile
-├── next.config.js
-├── package.json
-├── package-lock.json
-├── postcss.config.mjs
-├── README.md
-├── tailwind.config.ts
-└── tsconfig.json
-```
-
----
-
-## Requisitos Previos
-
-- **Docker Desktop** instalado ([Descargar aquí](https://www.docker.com/products/docker-desktop/))
-- **Git** instalado
-- **Node.js 20+** (opcional, solo para desarrollo local)
 
 ---
 
@@ -132,6 +52,118 @@ docker compose down
 # Detener y eliminar volúmenes (base de datos)
 docker compose down -v
 ```
+
+## Características
+
+### Reportes Implementados
+
+1. **Ventas Diarias** - Análisis de ventas por día con filtros de fecha
+2. **Top Productos** - Ranking de productos con búsqueda y paginación
+3. **Inventario en Riesgo** - Productos con stock bajo filtrados por categoría
+4. **Valor de Clientes** - Segmentación de clientes con paginación
+5. **Mix de Pagos** - Distribución de métodos de pago
+
+### Funcionalidades Técnicas
+
+- Filtros por fecha (Ventas Diarias)
+- Búsqueda por nombre (Top Productos)
+- Filtros por categoría con whitelist (Inventario en Riesgo)
+- Paginación server-side con validación (Top Productos, Valor de Clientes)
+- KPIs destacados en cada reporte
+- Seguridad: Usuario `app_user` con SELECT solo sobre VIEWS
+- Índices optimizados en PostgreSQL
+- Despliegue completo con Docker Compose
+
+---
+
+## Tecnologías Utilizadas
+
+- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS
+- **Backend**: Next.js Server Components, Node.js
+- **Base de Datos**: PostgreSQL 16
+- **Containerización**: Docker, Docker Compose
+- **Librerías**: pg (PostgreSQL client), Zod (validación)
+
+---
+
+## Estructura del Proyecto
+```
+cafecampus/
+├── .next/
+├── db/
+│   ├── schema.sql                 # Creación de tablas
+│   ├── seed.sql                   # Datos de prueba
+│   ├── reports_vw.sql             # 5 VIEWS de reportes
+│   ├── indexes.sql                # Índices optimizados
+│   ├── roles.sql                  # Usuario app_user y permisos
+│   └── migrate.sql                # Script maestro (ejecuta todo)
+│
+├── public/
+│
+├── src/
+│   ├── app/                       # Frontend (Next.js App Router)
+│   │   ├── api/                   # API Routes (conecta Frontend ↔ Backend)
+│   │   │   ├── customer-value/
+│   │   │   │   └── route.ts       # GET /api/customer-value
+│   │   │   ├── inventory-risk/
+│   │   │   │   └── route.ts       # GET /api/inventory-risk
+│   │   │   ├── payment-mix/
+│   │   │   │   └── route.ts       # GET /api/payment-mix
+│   │   │   ├── sales-daily/
+│   │   │   │   └── route.ts       # GET /api/sales-daily
+│   │   │   └── top-products/
+│   │   │       └── route.ts       # GET /api/top-products
+│   │   │
+│   │   ├── reports/               # Páginas de Reportes (UI)
+│   │   │   ├── customer-value/
+│   │   │   │   └── page.tsx       # Página: Valor de Clientes
+│   │   │   ├── inventory-risk/
+│   │   │   │   └── page.tsx       # Página: Inventario en Riesgo
+│   │   │   ├── payment-mix/
+│   │   │   │   └── page.tsx       # Página: Mix de Pagos
+│   │   │   ├── sales-daily/
+│   │   │   │   └── page.tsx       # Página: Ventas Diarias
+│   │   │   └── top-products/
+│   │   │       └── page.tsx       # Página: Top Productos
+│   │   │
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx               # Dashboard principal (Home)
+│   │
+│   ├── backend/                   # Backend (Lógica de Negocio)
+│   │   ├── customer-value.ts      # Controller: Valor de Clientes
+│   │   ├── inventory-risk.ts      # Controller: Inventario en Riesgo
+│   │   ├── payment-mix.ts         # Controller: Mix de Pagos
+│   │   ├── sales-daily.ts         # Controller: Ventas Diarias
+│   │   └── top-products.ts        # Controller: Top Productos
+│   │
+│   └── lib/                       # Utilidades
+│       └── db.ts                  # Conexión a PostgreSQL (Pool)
+│
+├── .dockerignore                   # Archivos ignorados por Docker
+├── .env.local                      # Variables de entorno (desarrollo)
+├── .gitignore
+├── docker-compose.yml              # Orquestación de servicios
+├── Dockerfile                      # Imagen de Next.js
+├── next.config.js
+├── next-env.d.ts
+├── package.json
+├── package-lock.json
+├── postcss.config.mjs
+├── README.md                       # Documentación
+└── tsconfig.json
+```
+
+---
+
+## Requisitos Previos
+
+- **Docker Desktop** instalado ([Descargar aquí](https://www.docker.com/products/docker-desktop/))
+- **Git** instalado
+- **Node.js 20+** (opcional, solo para desarrollo local)
+
+---
 
 ---
 
