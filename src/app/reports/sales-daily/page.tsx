@@ -50,7 +50,7 @@ export default function SalesDailyPage() {
                 `/api/sales-daily?date_from=${dateFrom}&date_to=${dateTo}`
             );
             const result: SalesDataResponse = await response.json();
-            
+
             if (result.success) {
                 setSalesData(result.data.salesData);
                 setSummary(result.data.summary);
@@ -64,7 +64,7 @@ export default function SalesDailyPage() {
 
     useEffect(() => {
         fetchSalesData();
-    }, []);
+    }, [dateFrom, dateTo]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -140,21 +140,31 @@ export default function SalesDailyPage() {
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                             <div className="bg-white rounded-lg shadow-sm border p-6">
-                                <p className="text-sm text-gray-500 mb-1">Total Ventas</p>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-sm text-gray-500">Total Ventas</p>
+                                </div>
                                 <p className="text-3xl font-bold text-gray-900">
-                                    ${summary.totalVentas.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                    ${summary.totalVentas.toLocaleString('es-MX', {
+                                        minimumFractionDigits: 2
+                                    })}
                                 </p>
                             </div>
                             <div className="bg-white rounded-lg shadow-sm border p-6">
-                                <p className="text-sm text-gray-500 mb-1">Total Tickets</p>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-sm text-gray-500">Total Tickets</p>
+                                </div>
                                 <p className="text-3xl font-bold text-gray-900">
                                     {summary.totalTickets.toLocaleString()}
                                 </p>
                             </div>
                             <div className="bg-white rounded-lg shadow-sm border p-6">
-                                <p className="text-sm text-gray-500 mb-1">Ticket Promedio</p>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-sm text-gray-500">Ticket Promedio</p>
+                                </div>
                                 <p className="text-3xl font-bold text-gray-900">
-                                    ${summary.promedioGeneral.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                                    ${summary.promedioGeneral.toLocaleString('es-MX', {
+                                        minimumFractionDigits: 2
+                                    })}
                                 </p>
                             </div>
                         </div>
@@ -165,66 +175,81 @@ export default function SalesDailyPage() {
                                     Detalle por Día ({salesData.length} registros)
                                 </h2>
                             </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead className="bg-gray-50 border-b">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Fecha
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Tickets
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Total Ventas
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Ticket Promedio
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Productos
-                                            </th>
-                                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Nivel
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {salesData.map((row, idx) => (
-                                            <tr key={idx} className="hover:bg-gray-50">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {new Date(row.fecha).toLocaleDateString('es-MX')}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
-                                                    {row.tickets}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-gray-900">
-                                                    ${Number(row.total_ventas).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
-                                                    ${Number(row.ticket_promedio).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
-                                                    {row.productos_vendidos}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                            row.nivel_actividad === 'Alto'
-                                                                ? 'bg-green-100 text-green-800'
-                                                                : row.nivel_actividad === 'Medio'
-                                                                ? 'bg-yellow-100 text-yellow-800'
-                                                                : 'bg-gray-100 text-gray-800'
-                                                        }`}
-                                                    >
-                                                        {row.nivel_actividad}
-                                                    </span>
-                                                </td>
+
+                            {salesData.length === 0 ? (
+                                <div className="px-6 py-12 text-center text-gray-500">
+                                    No hay datos para el rango de fechas seleccionado
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50 border-b">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Fecha
+                                                </th>
+                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Tickets
+                                                </th>
+                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Total Ventas
+                                                </th>
+                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Ticket Promedio
+                                                </th>
+                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Productos
+                                                </th>
+                                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Nivel
+                                                </th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {salesData.map((row, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {new Date(row.fecha).toLocaleDateString('es-MX', {
+                                                            weekday: 'short',
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
+                                                        {row.tickets}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-gray-900">
+                                                        ${Number(row.total_ventas).toLocaleString('es-MX', {
+                                                            minimumFractionDigits: 2
+                                                        })}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
+                                                        ${Number(row.ticket_promedio).toLocaleString('es-MX', {
+                                                            minimumFractionDigits: 2
+                                                        })}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">
+                                                        {row.productos_vendidos}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <span
+                                                            className={`px-3 py-1 rounded-full text-xs font-medium ${row.nivel_actividad === 'Alto'
+                                                                    ? 'bg-green-100 text-green-800'
+                                                                    : row.nivel_actividad === 'Medio'
+                                                                        ? 'bg-yellow-100 text-yellow-800'
+                                                                        : 'bg-gray-100 text-gray-800'
+                                                                }`}
+                                                        >
+                                                            {row.nivel_actividad}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
                         </div>
                     </>
                 )}

@@ -26,16 +26,25 @@ export default function TopProductsPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
-        fetch(`/api/top-products?search=${search}&page=${page}&limit=${limit}`)
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data.products);
-                setTotal(data.total);
-                setTotalPages(data.totalPages);
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(
+                    `/api/top-products?search=${encodeURIComponent(search)}&page=${page}&limit=${limit}`
+                );
+                const data = await response.json();
+
+                setProducts(data.products || []);
+                setTotal(data.total || 0);
+                setTotalPages(data.totalPages || 1);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            } finally {
                 setLoading(false);
-            })
-            .catch(() => setLoading(false));
+            }
+        };
+
+        fetchProducts();
     }, [search, page, limit]);
 
     const top3 = products.slice(0, 3);
@@ -98,6 +107,7 @@ export default function TopProductsPage() {
                         ))}
                     </div>
                 )}
+
                 <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
                     <h2 className="text-lg font-semibold mb-4 text-blue-600">Buscar Producto</h2>
                     <div className="flex gap-4">
@@ -127,7 +137,7 @@ export default function TopProductsPage() {
 
                 <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                     <div className="px-6 py-4 border-b flex items-center justify-between">
-                        <h2 className="text-lg font-semibold mb-4 text-blue-600">
+                        <h2 className="text-lg font-semibold text-blue-600">
                             Productos ({total} total)
                         </h2>
                         <div className="flex gap-2 items-center text-sm text-gray-600">
@@ -135,7 +145,8 @@ export default function TopProductsPage() {
                             <select
                                 value={limit}
                                 onChange={(e) => {
-                                    setLimit(Number(e.target.value));
+                                    const newLimit = Number(e.target.value);
+                                    setLimit(newLimit);
                                     setPage(1);
                                 }}
                                 className="border border-gray-300 rounded px-2 py-1"
@@ -150,6 +161,10 @@ export default function TopProductsPage() {
                     {loading ? (
                         <div className="px-6 py-12 text-center text-gray-500">
                             Cargando...
+                        </div>
+                    ) : products.length === 0 ? (
+                        <div className="px-6 py-12 text-center text-gray-500">
+                            No se encontraron productos
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -208,15 +223,14 @@ export default function TopProductsPage() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                        product.clasificacion === 'Estrella'
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${product.clasificacion === 'Estrella'
                                                             ? 'bg-yellow-100 text-yellow-800'
                                                             : product.clasificacion === 'Popular'
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : product.clasificacion === 'Regular'
-                                                            ? 'bg-blue-100 text-blue-800'
-                                                            : 'bg-gray-100 text-gray-800'
-                                                    }`}
+                                                                ? 'bg-green-100 text-green-800'
+                                                                : product.clasificacion === 'Regular'
+                                                                    ? 'bg-blue-100 text-blue-800'
+                                                                    : 'bg-gray-100 text-gray-800'
+                                                        }`}
                                                 >
                                                     {product.clasificacion}
                                                 </span>
@@ -236,22 +250,20 @@ export default function TopProductsPage() {
                             <button
                                 onClick={() => setPage(Math.max(1, page - 1))}
                                 disabled={page <= 1}
-                                className={`px-4 py-2 rounded-md font-medium ${
-                                    page <= 1
+                                className={`px-4 py-2 rounded-md font-medium transition-colors ${page <= 1
                                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                         : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
+                                    }`}
                             >
                                 Anterior
                             </button>
                             <button
                                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                                 disabled={page >= totalPages}
-                                className={`px-4 py-2 rounded-md font-medium ${
-                                    page >= totalPages
+                                className={`px-4 py-2 rounded-md font-medium transition-colors ${page >= totalPages
                                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                         : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
+                                    }`}
                             >
                                 Siguiente
                             </button>

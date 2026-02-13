@@ -60,10 +60,10 @@ export default function PaymentMixPage() {
 
     const getPaymentIcon = (metodo: string) => {
         switch (metodo) {
-            case 'efectivo': return '💵';
-            case 'tarjeta': return '💳';
-            case 'transferencia': return '🏦';
-            default: return '💰';
+            case 'efectivo': return '';
+            case 'tarjeta': return '';
+            case 'transferencia': return '';
+            default: return '';
         }
     };
 
@@ -136,7 +136,7 @@ export default function PaymentMixPage() {
                         </div>
 
                         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-                            <h2 className="text-lg font-semibold mb-6">
+                            <h2 className="text-lg font-semibold mb-6 text-blue-600">
                                 Distribución por Método de Pago
                             </h2>
                             <div className="space-y-4">
@@ -169,7 +169,7 @@ export default function PaymentMixPage() {
 
                         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                             <div className="px-6 py-4 border-b">
-                                <h2 className="text-lg font-semibold">Detalle por Método</h2>
+                                <h2 className="text-lg font-semibold text-blue-600">Detalle por Método</h2>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
