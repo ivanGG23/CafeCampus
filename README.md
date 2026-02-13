@@ -38,6 +38,11 @@ Este comando:
    - `indexes.sql` → Crea índices optimizados
    - `roles.sql` → Configura usuario `app_user`
 
+### Nota importante
+Si el proyecto no se ejecuta correctamente, verificar si hay otra instancia de PostgreSQL corriendo localmente u otro contenedor Docker usando el puerto 5432. 
+
+**Solución:** Detener la instancia de PostgreSQL que esté en ejecución y volver a ejecutar el comando `docker compose up --build`.
+
 ### Paso 3: Acceder a la Aplicación
 
 Abre tu navegador en:
